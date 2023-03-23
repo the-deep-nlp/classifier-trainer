@@ -21,6 +21,7 @@ setup(
         "transformers==4.8.2",
         "torchmetrics==0.4.1",
         "sentencepiece",
+        "pandas>=1.2.4",
     ],
     # *strongly* suggested for sharing
     version="0.1",
