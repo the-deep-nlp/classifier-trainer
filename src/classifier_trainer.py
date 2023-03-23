@@ -3,13 +3,13 @@ import multiprocessing
 import pandas as pd
 import torch
 import pytorch_lightning as pl
-
+from typing import List, Dict
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pytorch_lightning.utilities import rank_zero_only
 from transformers import AutoTokenizer
 
-from models.model import TrainingTransformer, Model
-from utils import _hypertune_threshold, _generate_test_set_results, _preprocess_df
+from .models.model import TrainingTransformer, Model
+from .utils import _hypertune_threshold, _generate_test_set_results, _preprocess_df
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -28,13 +28,18 @@ class NoSavingCheckpoint(ModelCheckpoint):
         pass
 
 
-class TrainingPipeline:
+class ClassifierTrainer:
     def __init__(self):
         pass
 
     def _initialize_training_args(self):
 
-        n_gpu = 1 if torch.cuda.is_available() else 0
+        if torch.cuda.is_available():
+            n_gpu = 1
+            training_device = "cuda"
+        else:
+            n_gpu = 0
+            training_device = "cpu"
 
         checkpoint_callback_params = {
             "save_top_k": 1,
@@ -106,7 +111,10 @@ class TrainingPipeline:
             learning_rate=self.hyperparameters["learning_rate"],
             max_len=self.hyperparameters["max_len"],
             n_freezed_layers=self.hyperparameters["n_freezed_layers"],
+            loss_gamma=self.hyperparameters["loss_gamma"],
+            proportions_pow=self.hyperparameters["proportions_pow"],
             architecture_setup=self.architecture_setup,
+            training_device=training_device,
         )
 
     def train_classification_model(
@@ -126,6 +134,8 @@ class TrainingPipeline:
         n_freezed_layers: int = 1,
         train_batch_size: int = 8,
         val_batch_size: int = 16,
+        loss_gamma: float = 1,
+        proportions_pow: float = 0.5,
     ):
 
         self.hyperparameters = {
@@ -138,7 +148,13 @@ class TrainingPipeline:
             "train_batch_size": train_batch_size,
             "val_batch_size": val_batch_size,
             "enable_checkpointing": enable_checkpointing,
+            "proportions_pow": proportions_pow,
+            "loss_gamma": loss_gamma,
         }
+        assert (
+            architecture_setup in architecture_setups
+        ), f"arg 'architecture_setup' must be in {architecture_setups}"
+
         self.architecture_setup = architecture_setup
         self.backbone_name = backbone_name
 
@@ -168,12 +184,29 @@ class TrainingPipeline:
         self.model = torch.load(model_path)
         self.model.eval()
 
+    def generate_test_predictions(self, sentences: List[str]) -> List[List[str]]:
+        """
+        return list of list of chosen tags
+        """
+        assert (
+            type(sentences) is list
+        ), f"'sentences' argument must be a list of entries."
+        assert hasattr(
+            self, "model"
+        ), f"no attribute 'model'. Please train your model using the 'train_classification_model' function or load it using the 'load_model' function."
+        predictions = self.model.custom_predict(sentences)
+        return predictions
+
     def generate_test_results(
         self,
         test_df: pd.DataFrame,
         generate_visulizations: bool = True,
         save_results: bool = True,
     ):
+        assert hasattr(
+            self, "model"
+        ), f"no attribute 'model'. Please train your model using the 'train_classification_model' function or load it using the 'load_model' function."
+
         test_df = _preprocess_df(test_df)
         self.test_set_results = _generate_test_set_results(
             self.model, test_df
@@ -192,3 +225,4 @@ class TrainingPipeline:
 
         if generate_visulizations:
             ...
+            # TODO: generate visulaizations automatically for all tasks.

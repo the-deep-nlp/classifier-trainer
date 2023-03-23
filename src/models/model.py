@@ -1,17 +1,20 @@
 import os
 
-from tqdm.auto import tqdm
-import torch.nn.functional as F
+from tqdm import tqdm
+
+# import torch.nn.functional as F
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from torch import nn
+
+# from torch import nn
 from transformers import AdamW
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import StepLR
-from models.data import CustomDataset
-from models.architecture import ModelArchitecture
-from utils import _get_tagname_to_id, _get_target_weights
+from .data import CustomDataset
+from .architecture import ModelArchitecture
+from .utils import _get_tagname_to_id, _get_target_weights
+from .loss import FocalLoss
 
 architecture_setups = ["base_architecture", "multiabel_architecture"]
 protected_attributes = ["gender", "country"]
@@ -32,12 +35,15 @@ class TrainingTransformer(pl.LightningModule):
         train_params,
         val_params,
         tokenizer,
+        training_device: str,
         n_freezed_layers: int,
         learning_rate: float,
         weight_decay: float,
         dropout_rate: float,
         max_len: int,
         architecture_setup: str,
+        loss_gamma: float,
+        proportions_pow: float,
         adam_epsilon: float = 1e-7,
         **kwargs,
     ):
@@ -55,6 +61,15 @@ class TrainingTransformer(pl.LightningModule):
         )
 
         self.tagname_to_tagid_classification = _get_tagname_to_id(all_targets)
+        proportions = _get_target_weights(
+            train_dataset.target_classification.tolist(),
+            self.tagname_to_tagid_classification,
+        )
+
+        tags_proportions = {
+            tagname: proportions[tagid].item()
+            for tagname, tagid in self.tagname_to_tagid_classification.items()
+        }
         # print("tagname to tagid classification", self.tagname_to_tagid_classification)
 
         self.max_len = max_len
@@ -69,6 +84,7 @@ class TrainingTransformer(pl.LightningModule):
         self.train_params = train_params
         self.val_params = val_params
         self.max_len = max_len
+        self.training_device = training_device
 
         self.training_loader = self._get_loaders(
             dataset=train_dataset,
@@ -80,12 +96,18 @@ class TrainingTransformer(pl.LightningModule):
             params=self.val_params,
         )
 
-        self.criterion_classification = nn.BCEWithLogitsLoss(
-            # pos_weight=_get_target_weights(
-            #    targets=all_targets,
-            #    tagname_to_tagid=self.tagname_to_tagid_classification,
-            # )
+        self.criterion_classification = FocalLoss(
+            tag_token_proportions=tags_proportions,
+            gamma=loss_gamma,
+            proportions_pow=proportions_pow,
+            device=self.training_device,
         )
+        # self.criterion_classification = nn.BCEWithLogitsLoss(
+        #     pos_weight=_get_target_weights(
+        #         targets=all_targets,
+        #         tagname_to_tagid=self.tagname_to_tagid_classification,
+        #     )
+        # )
 
     def forward(self, inputs):
         return self.model(inputs)
