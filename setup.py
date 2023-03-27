@@ -20,9 +20,10 @@ setup(
         "pytorch-lightning==1.3.8",
         "transformers==4.8.2",
         "torchmetrics==0.4.1",
+        "torchtext>=0.10.0",
         "sentencepiece",
         "pandas>=1.2.4",
-        "pyYAML<=5.4.1"
+        "pyYAML<=5.4.1",
     ],
     # *strongly* suggested for sharing
     version="0.1",
