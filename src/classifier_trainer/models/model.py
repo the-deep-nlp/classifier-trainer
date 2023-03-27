@@ -62,7 +62,7 @@ class TrainingTransformer(pl.LightningModule):
 
         self.tagname_to_tagid_classification = _get_tagname_to_id(all_targets)
         proportions = _get_target_weights(
-            train_dataset.target_classification.tolist(),
+            all_targets,
             self.tagname_to_tagid_classification,
         )
 
