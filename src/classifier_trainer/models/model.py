@@ -66,10 +66,10 @@ class TrainingTransformer(pl.LightningModule):
             self.tagname_to_tagid_classification,
         )
 
-        tags_proportions = {
-            tagname: proportions[tagid].item()
-            for tagname, tagid in self.tagname_to_tagid_classification.items()
-        }
+        # tags_proportions = {
+        #     tagname: proportions[tagid].item()
+        #     for tagname, tagid in self.tagname_to_tagid_classification.items()
+        # }
         # print("tagname to tagid classification", self.tagname_to_tagid_classification)
 
         self.max_len = max_len
@@ -97,7 +97,7 @@ class TrainingTransformer(pl.LightningModule):
         )
 
         self.criterion_classification = FocalLoss(
-            tag_token_proportions=tags_proportions,
+            tag_token_proportions=proportions,
             gamma=loss_gamma,
             proportions_pow=proportions_pow,
             device=self.training_device,
