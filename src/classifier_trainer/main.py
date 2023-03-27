@@ -202,7 +202,7 @@ class ClassifierTrainer:
         assert hasattr(
             self, "model"
         ), f"no attribute 'model'. Please train your model using the 'train_classification_model' function or load it using the 'load_model' function."
-        predictions = self.model.custom_predict(sentences)
+        predictions = self.model.custom_predict(sentences, setup="testing")
         return predictions
 
     def generate_test_results(
@@ -234,3 +234,5 @@ class ClassifierTrainer:
         if generate_visulizations:
             ...
             # TODO: generate visulaizations automatically for all tasks.
+
+        return self.test_set_results
