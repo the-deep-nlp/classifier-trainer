@@ -18,7 +18,9 @@ def _custom_eval(x) -> List:
         return literal_eval(x)
 
 
-def _preprocess_df(df: pd.DataFrame, classification_col: str) -> pd.DataFrame:
+def _preprocess_df(
+    df: pd.DataFrame, classification_col: str = "target_classification"
+) -> pd.DataFrame:
     classification_df = df.copy().drop_duplicates()
     """
     1. clean excerpt
