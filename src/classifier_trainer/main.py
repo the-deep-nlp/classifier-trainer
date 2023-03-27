@@ -14,6 +14,7 @@ from .utils import _hypertune_threshold, _generate_test_set_results, _preprocess
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 architecture_setups = ["base_architecture", "multiabel_architecture"]
+relevant_classification_columns = ["excerpt", "target_classification"]
 
 
 class NoSavingCheckpoint(ModelCheckpoint):
@@ -121,9 +122,9 @@ class ClassifierTrainer:
         self,
         train_df: pd.DataFrame,
         val_df: pd.DataFrame,
-        architecture_setup: str,
-        backbone_name: str,
-        results_dir: str,
+        architecture_setup: str = "multiabel_architecture",
+        backbone_name: str = "nlp-thedeep/humbert",
+        results_dir: str = "results",
         enable_checkpointing: bool = True,
         save_model: bool = True,
         n_epochs: int = 3,
@@ -137,6 +138,11 @@ class ClassifierTrainer:
         loss_gamma: float = 1,
         proportions_pow: float = 0.5,
     ):
+        for one_col in relevant_classification_columns:
+            for df_type, one_df in {"train_df": train_df, "val_df": val_df}.items():
+                assert (
+                    one_col in one_df.columns
+                ), f"'{df_type}' foes not contain the column '{one_col}'."
 
         self.hyperparameters = {
             "n_epochs": n_epochs,
