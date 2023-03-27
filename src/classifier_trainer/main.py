@@ -37,9 +37,11 @@ class ClassifierTrainer:
 
         if torch.cuda.is_available():
             n_gpu = 1
+            accelerator = "gpu"
             training_device = "cuda"
         else:
             n_gpu = 0
+            accelerator = "cpu"
             training_device = "cpu"
 
         checkpoint_callback_params = {
@@ -85,11 +87,11 @@ class ClassifierTrainer:
         self.trainer = pl.Trainer(
             logger=None,
             callbacks=[early_stopping_callback, self.checkpoint_callback],
-            # progress_bar_refresh_rate=5,
+            enable_progress_bar=True,
             profiler="simple",
             # log_gpu_memory=True,
-            # weights_summary=None,
-            gpus=n_gpu,
+            enable_model_summary=True,
+            accelerator=accelerator,
             precision=16 if n_gpu > 0 else 32,
             accumulate_grad_batches=1,
             max_epochs=self.hyperparameters["n_epochs"],
