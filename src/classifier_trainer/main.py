@@ -88,7 +88,7 @@ class ClassifierTrainer:
             # progress_bar_refresh_rate=5,
             profiler="simple",
             # log_gpu_memory=True,
-            weights_summary=None,
+            # weights_summary=None,
             gpus=n_gpu,
             precision=16 if n_gpu > 0 else 32,
             accumulate_grad_batches=1,
