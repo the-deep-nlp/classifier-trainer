@@ -1,7 +1,7 @@
 import torch
 from typing import Dict, List
-from models.architectures.base_architecture import BaseArchitecture
-from models.architectures.multilabel_architecture import MultilabelArchitecture
+from .architectures.base_architecture import BaseArchitecture
+from .architectures.multilabel_architecture import MultilabelArchitecture
 
 architecture_setups = ["base_architecture", "multiabel_architecture"]
 n_possible_nb_mid_layers = [0, 1, 2]

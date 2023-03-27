@@ -13,15 +13,16 @@ setup(
     include_package_data=True,
     # Needed for dependencies
     install_requires=[
+        "protobuf>=3.19.5",
         "scikit-learn>=0.24.2",
         "torch>=1.10.2",
         "tqdm>=4.61.2",
-        "protobuf==3.19.5",
         "pytorch-lightning==1.3.8",
         "transformers==4.8.2",
         "torchmetrics==0.4.1",
         "sentencepiece",
         "pandas>=1.2.4",
+        "pyYAML<=5.4.1"
     ],
     # *strongly* suggested for sharing
     version="0.1",

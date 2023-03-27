@@ -3,7 +3,7 @@ import torch.nn as nn
 from typing import List, Dict
 from transformers import AutoModel
 import numpy as np
-from utils import _flatten
+from ..utils import _flatten
 
 
 def _get_tag_id_to_layer_id(ids_each_level):

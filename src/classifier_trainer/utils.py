@@ -1,8 +1,7 @@
 import pandas as pd
-from typing import List, Set
+from typing import List, Dict
 from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
-from typing import Dict
 import matplotlib.pyplot as plt
 import seaborn as sns
 from ast import literal_eval
