@@ -175,7 +175,7 @@ class ClassifierTrainer:
         self.train_df = _preprocess_df(train_df)
         self.val_df = _preprocess_df(val_df)
 
-        self._initialize_training_args(self.hyperparameters)
+        self._initialize_training_args()
         self.trainer.fit(self.training_model)
 
         self.model = Model(self.training_model)
