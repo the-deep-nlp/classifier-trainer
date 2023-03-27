@@ -85,7 +85,7 @@ class ClassifierTrainer:
         self.trainer = pl.Trainer(
             logger=None,
             callbacks=[early_stopping_callback, self.checkpoint_callback],
-            progress_bar_refresh_rate=5,
+            # progress_bar_refresh_rate=5,
             profiler="simple",
             log_gpu_memory=True,
             weights_summary=None,
