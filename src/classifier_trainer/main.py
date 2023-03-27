@@ -87,7 +87,7 @@ class ClassifierTrainer:
             callbacks=[early_stopping_callback, self.checkpoint_callback],
             # progress_bar_refresh_rate=5,
             profiler="simple",
-            log_gpu_memory=True,
+            # log_gpu_memory=True,
             weights_summary=None,
             gpus=n_gpu,
             precision=16 if n_gpu > 0 else 32,
