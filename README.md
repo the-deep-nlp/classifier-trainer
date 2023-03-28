@@ -62,7 +62,7 @@ We present 2 training architectures
 The baseline architecture does not take into account the hierarchy or the relationships of the framework's labels
 and treats all the categories with the same encoded embedding.
 <p float="center">
-  <img src="img/architectures/baseline-architecture.png" width="250" />
+  <img src="img/architectures/baseline-architecture.png" width="450" />
 </p>
 
 - **Our proposed Architecture**: our approach shares N-1 Transformer layers of the LLM across all the categories,
@@ -72,7 +72,7 @@ sub-layer, predicting only the labels belonging to the corresponding task.
 The resulting architecture is a combination of the shared parameters and specific components and follows 
 the relations and hierarchy of the analytical framework's label space. 
 <p float="center">
-  <img src="img/architectures/multilabel-architecture.png" width="250" />
+  <img src="img/architectures/multilabel-architecture.png" width="450" />
 </p>
 
 
