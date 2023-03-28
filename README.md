@@ -43,7 +43,7 @@ trained_model = trainer.load_model(
 ```
 **Generate test set predictions**
 ```
-test_set_results = trainer.generate_test_predictions(
+test_set_predictions = trainer.generate_test_predictions(
     - sentences: List[str]: List of entries
 )
 ```
@@ -100,7 +100,7 @@ trained_model = trainer.load_model(TRAINED_MODEL_PATH)
 ```
 **Generate test set predictions**
 ```
-test_set_results = trainer.generate_test_predictions(test_df.excerpt.tolist())
+test_set_predictions = trainer.generate_test_predictions(test_df.excerpt.tolist())
 ```
 **Generate test set results**
 ```
