@@ -140,6 +140,26 @@ class ClassifierTrainer:
         loss_gamma: float = 1,
         proportions_pow: float = 0.5,
     ):
+        """
+        Inputs:
+            - train_df: pd.DataFrame: Training DataFrame with 2 columns: ["excerpt", "target_classification"]
+            - val_df: pd.DataFrame: Validation DataFrame with 2 columns: ["excerpt", "target_classification"]
+            - architecture_setup: str: one of ["base_architecture", "multiabel_architecture"]
+            - backbone_name: str: Backbone Name in HuggingFace
+            - results_dir: str: Results directory
+            - enable_checkpointing: bool: Whether or not to save model checkpoints while training
+            - save_model: bool: Whether or not to save the model after training
+            - n_epochs: int: Number of total training epochs
+            - dropout: float: Dropout rate
+            - weight_decay: float: AdamWeight weight decay
+            - learning_rate: float: Training Learning Rate
+            - max_len: int: Max entry input length
+            - n_freezed_layers: int: Number of freezed layers in the model training
+            - train_batch_size: int: Training batch size
+            - val_batch_size: int: Validation batch size
+            - loss_gamma: float: Gamma parameter in the focal loss
+            - proportions_pow: float: Alpha parameter in the focal loss
+        """
         for one_col in relevant_classification_columns:
             for df_type, one_df in {"train_df": train_df, "val_df": val_df}.items():
                 assert (
@@ -189,12 +209,21 @@ class ClassifierTrainer:
         return self.model
 
     def load_model(self, model_path: str):
+        """
+        Inputs:
+            - model_path: str: path of the saved model
+        """
         self.model = torch.load(model_path)
         self.model.eval()
+        return self.model
 
     def generate_test_predictions(self, sentences: List[str]) -> List[List[str]]:
         """
-        return list of list of chosen tags
+        Generate model predictions
+        Inputs:
+            - sentences: List[str]: List of entries
+        Outputs:
+            Relevant Tags: [[tag1, tag2, ...], [tag2, tag3], [...], ...]
         """
         assert (
             type(sentences) is list
@@ -211,10 +240,20 @@ class ClassifierTrainer:
         generate_visulizations: bool = True,
         save_results: bool = True,
     ):
+        """
+
+        Outputs:
+            - test_df: pd.DataFrame: test set results
+            - generate_visulizations: bool: Whether to generate visualisations of the test results
+            - save_results: bool: Whether to save results
+        """
         assert hasattr(
             self, "model"
         ), f"no attribute 'model'. Please train your model using the 'train_classification_model' function or load it using the 'load_model' function."
-
+        for one_col in relevant_classification_columns:
+            assert (
+                one_col in test_df.columns
+            ), f"'test_df' foes not contain the column '{one_col}'."
         test_df = _preprocess_df(test_df)
         self.test_set_results = _generate_test_set_results(
             self.model, test_df
