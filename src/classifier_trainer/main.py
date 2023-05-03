@@ -260,7 +260,7 @@ class ClassifierTrainer:
         ).sort_values(by="tag")
 
         if save_results:
-            self.RESULTS_DIR = results_dir
+            self.RESULTS_DIR = self.results_dir
             CLASSIFICATION_RESULTS_DIR = os.path.join(
                 self.RESULTS_DIR, "classification"
             )
