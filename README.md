@@ -13,7 +13,7 @@ trainer = ClassifierTrainer()
 trained_model = trainer.train_classification_model(
     - train_df: pd.DataFrame: Training DataFrame with 2 columns: ["excerpt", "target_classification"],
     - val_df: pd.DataFrame: Validation DataFrame with 2 columns: ["excerpt", "target_classification"],
-    - architecture_setup: str: one of ["base_architecture", "multiabel_architecture"], default='multiabel_architecture',
+    - architecture_setup: str: one of ["base_architecture", "multilabel_architecture"], default='multilabel_architecture',
     - backbone_name: str: Backbone Name in HuggingFace, default='nlp-thedeep/humbert',
     - results_dir: str: Results directory, default='results',
     - enable_checkpointing: bool: Whether or not to save model checkpoints while training, default=True,
@@ -68,8 +68,8 @@ and treats all the categories with the same encoded embedding.
 - **Our proposed Architecture**: our approach shares N-1 Transformer layers of the LLM across all the categories,
 while the Nth layer is replicated K times, K being the number of classification tasks.  
 A linear classification head is then defined on top of each Transformer
-sub-layer, predicting only the labels belonging to the corresponding task. 
-The resulting architecture is a combination of the shared parameters and specific components and follows 
+sub-layer, predicting only the labels belonging to the corresponding task.
+The resulting architecture is a combination of the shared parameters and specific components and follows
 the relations and hierarchy of the analytical framework's label space. 
 <p float="center">
   <img src="img/architectures/multilabel-architecture.png" width="450" />
@@ -85,7 +85,7 @@ import pandas as pd
 trainer = ClassifierTrainer()
 
 train_df = pd.read_csv(TRAINING DATAFRAME PATH)
-val_df = pd.red_csv(VALIDATION DATAFRAME PATH)
+val_df = pd.read_csv(VALIDATION DATAFRAME PATH)
 
 trained_model = trainer.train_classification_model(train_df, val_df)
 ```
@@ -106,3 +106,8 @@ test_set_predictions = trainer.generate_test_predictions(test_df.excerpt.tolist(
 ```
 test_set_results = trainer.generate_test_results(test_df)
 ```
+
+**multilabel_architecture**
+
+When using the `multilabel_architecture` make sure you have a nested hierarchy
+of exactly 3 levels separated with `->`
