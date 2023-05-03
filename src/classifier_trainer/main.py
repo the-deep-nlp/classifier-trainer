@@ -239,6 +239,7 @@ class ClassifierTrainer:
         test_df: pd.DataFrame,
         generate_visulizations: bool = True,
         save_results: bool = True,
+        results_dir: str = "results",
     ):
         """
 
