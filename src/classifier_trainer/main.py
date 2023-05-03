@@ -267,7 +267,7 @@ class ClassifierTrainer:
             )
             if not os.path.exists(CLASSIFICATION_RESULTS_DIR):
                 os.makedirs(CLASSIFICATION_RESULTS_DIR)
-            file_name = f"classification_results_{self.results_name}.csv"
+            file_name = f"classification_results.csv"
             self.test_set_results.to_csv(
                 os.path.join(CLASSIFICATION_RESULTS_DIR, file_name)
             )
