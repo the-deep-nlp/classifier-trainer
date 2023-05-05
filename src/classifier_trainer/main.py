@@ -239,6 +239,7 @@ class ClassifierTrainer:
         test_df: pd.DataFrame,
         generate_visulizations: bool = True,
         save_results: bool = True,
+        results_dir: str = "results",
     ):
         """
 
@@ -260,12 +261,13 @@ class ClassifierTrainer:
         ).sort_values(by="tag")
 
         if save_results:
+            self.RESULTS_DIR = self.results_dir
             CLASSIFICATION_RESULTS_DIR = os.path.join(
                 self.RESULTS_DIR, "classification"
             )
             if not os.path.exists(CLASSIFICATION_RESULTS_DIR):
                 os.makedirs(CLASSIFICATION_RESULTS_DIR)
-            file_name = f"classification_results_{self.results_name}.csv"
+            file_name = f"classification_results.csv"
             self.test_set_results.to_csv(
                 os.path.join(CLASSIFICATION_RESULTS_DIR, file_name)
             )
