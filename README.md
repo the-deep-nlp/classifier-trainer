@@ -1,4 +1,5 @@
 # classifier-trainer
+This Python Package is intented to automatically train NLP classification model from labeled data.
 
 ## Full Documentation
 **Install library**
